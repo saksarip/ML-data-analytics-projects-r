@@ -1,0 +1,108 @@
+---
+title: "SAT_AcceptanceRate_Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+#reading the data
+AcceptanceRate = read.csv("/Users/sakethsaripalli/RProjects/AcceptanceRate.csv",stringsAsFactors = FALSE)
+SAT_Scores = read.csv("/Users/sakethsaripalli/RProjects/SAT_Scores.csv",stringsAsFactors = FALSE)
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+
+```{r}
+
+library(dplyr)
+
+
+AcceptanceRate = read.csv("/Users/sakethsaripalli/RProjects/AcceptanceRate.csv",stringsAsFactors = FALSE)
+SAT_Scores = read.csv("/Users/sakethsaripalli/RProjects/SAT_Scores.csv",stringsAsFactors = FALSE)
+
+
+#creates combined data frame of SAT Score and Acceptance data frames
+mergedFrame <- cbind(AcceptanceRate, SAT_Scores)
+
+```
+
+```{r}
+
+#Creates collapsed Data Frame of average SAT and Acceptance Rates of the 3 years given
+un <- as.integer(unique(mergedFrame$university))
+un1<-as.character(unique(mergedFrame$university_name))
+
+matrix1 <- matrix(0, nrow = 2370, ncol = 3)
+result = as.data.frame(matrix1)
+colnames(result) = c("university_names", "avg_sat","acceptance_rate")
+
+order(c(1, 5, 3, 6, 9))
+
+
+k <- 1 
+for(i in 1: 2370){
+  temp = subset(mergedFrame, as.numeric(mergedFrame$university) == un[i])
+  temp1 = as.numeric(temp$sat_math_75) + as.numeric(temp$sat_cr_75)
+  temp2 = (as.numeric(temp$admissions_total) / temp$applicants_total)
+  result$university_names[k] = un1[i]
+  result$avg_sat[k] = temp1
+  result$acceptance_rate[k] = temp2  
+  k <- k+1
+  
+}
+
+
+```
+
+
+
+```{r pressure, echo=FALSE}
+
+cleared <- subset(result, result$avg_sat != "None")
+#Plotting Average SAT vs Acceptance Rate
+
+
+plot(cleared$acceptance_rate, as.numeric(cleared$avg_sat), xlab = "Acceptance Rate", ylab = "Average SAT Score")
+
+```
+```{r}
+#Makes Data Frame of yearly average SAT and Acceptance Rate
+
+
+
+mergedFrame2 <- cbind(mergedFrame, as.numeric(mergedFrame$sat_math_75) + as.numeric(mergedFrame$sat_cr_75))
+
+n2014 <- subset(mergedFrame2, mergedFrame2$year == 2014)
+n2015 <- subset(mergedFrame2, mergedFrame2$year == 2015)
+n2016 <- subset(mergedFrame2, mergedFrame2$year == 2016)
+
+acc2014 <- mean(as.numeric(n2014$admissions_total) / as.numeric(n2014$applicants_total), na.rm = TRUE)
+acc2015 <- mean(as.numeric(n2015$admissions_total) / as.numeric(n2015$applicants_total), na.rm = TRUE)
+acc2016 <- mean(as.numeric(n2016$admissions_total) / as.numeric(n2016$applicants_total), na.rm = TRUE)
+
+sat_and_acc_2014 <- c(mean(as.numeric(n2014[, 13]), na.rm = TRUE), acc2014)
+sat_and_acc_2015 <- c(mean(as.numeric(n2015[, 13]), na.rm = TRUE), acc2015)
+sat_and_acc_2016 <- c(mean(as.numeric(n2016[, 13]), na.rm = TRUE), acc2016)
+
+Total_Rates <- data.frame(sat_and_acc_2014, sat_and_acc_2015, sat_and_acc_2016)
+rownames(Total_Rates) <- c("Average 75% SAT", "Average Acceptance Rate")
+colnames(Total_Rates) <- c("2014", "2015", "2016")
+
+
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
