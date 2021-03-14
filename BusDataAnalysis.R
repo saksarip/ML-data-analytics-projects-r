@@ -1,5 +1,5 @@
 
-
+#Script that does exploratory data analysis of Bus_Breakdown_Data from kaggle
 Bus_Data = read.csv("/Users/sakethsaripalli/RProjects/Bus_Breakdown_Data_CSV.csv", stringsAsFactors = FALSE)
 summary(Bus_Data)
 unique(Bus_Data$School_Year)
@@ -10,6 +10,8 @@ uniqueC <- as.character(unique(Bus_Data$Reason))
 finalMatrix <- matrix(0, length(uniqueR), length(uniqueC))
 View(Bus_Data)
 
+
+#Aggregating Reason data
 k<-1
 m<-1
 counter <- 0
@@ -20,13 +22,7 @@ for(i in 1: length(uniqueR)){
   for(j in 1 : length(uniqueC)){
     
     temp = subset(Bus_Data, (Bus_Data$Route_Number == uniqueR[i] & Bus_Data$Reason == uniqueC[j]))
-    finalMatrix[k,m] = length(temp$Reason)
-    
-    
-    
-    
-    
-    
+    finalMatrix[k,m] = length(temp$Reason
     
     m <- m + 1
     counter <- counter + 1
@@ -37,6 +33,7 @@ for(i in 1: length(uniqueR)){
 }
 
 
+ #Recreating final dataframe and saving it 
 finalFrame <- as.data.frame(finalMatrix)
 finalFrame <- finalFrame[, -11]
 rownames(finalFrame) <- uniqueR
@@ -56,27 +53,6 @@ busstop.Calculator <- function(route){
 }
 
 
-
-tempVec 
-percentageFrame
-percentageFrame <- data.frame()
-length(rownames(finalFrame))
-
-
-
-
-
-
-rs <- rowSums(finalFrame)
-percentageFrame <- finalFrame / rs
-
-
-
-
-failureFrame <- finalFrame[, c()]
-
-
-ggplot()
 
 
 
